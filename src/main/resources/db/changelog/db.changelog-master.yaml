@@ -1,0 +1,17 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: you
+      changes:
+        - sql:
+            splitStatements: false
+            stripComments: false
+            sql: |
+              CREATE EXTENSION IF NOT EXISTS unaccent;
+              CREATE EXTENSION IF NOT EXISTS pg_trgm;
+              CREATE OR REPLACE FUNCTION unaccent_immutable(text)
+              RETURNS text AS
+              $$
+              SELECT unaccent('public.unaccent', $1);
+              $$
+              LANGUAGE sql IMMUTABLE;

@@ -1,0 +1,65 @@
+micronaut:
+  application:
+    name: api
+  server:
+    context-path: /api/v1
+  problem:
+    enabled: true
+    stack-trace: false
+  security:
+    enabled: true
+    intercept-url-map:
+      - pattern: /usuarios
+        http-method: POST
+        access:
+          - isAuthenticated()
+          - hasRole('ADMIN')
+    authentication: bearer
+    token:
+      jwt:
+        expires-in: "${JWT_EXPIRES_IN:3600}"
+        enabled: true
+        signatures:
+          secret:
+            generator:
+              secret: "${JWT_GENERATOR_SECRET:qVVYA6Fys3ddKN4MpLOnM9Dlages1lEP}"
+    endpoints:
+      login:
+        enabled: true
+      logout:
+        enabled: true
+
+problem-json:
+  stack-trace: false
+
+datasources:
+  default:
+    db-type: postgres
+    dialect: POSTGRES
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/comcode_db
+    username: postgres
+    password: postgres
+
+jpa:
+  default:
+    properties:
+      hibernate:
+        hbm2ddl:
+          auto: update
+
+liquibase:
+  enabled: true
+  datasources:
+    default:
+      change-log: classpath:db/changelog/db.changelog-master.yaml
+
+gcp:
+  credentials:
+    location: "${GOOGLE_APPLICATION_CREDENTIALS:./credentials/gcp-credentials.json}"
+  gmail:
+    delegated-user: "${DELEGATED_USER:noreply@comcode.com.br}"
+    application-name: "${APPLICATION_NAME:Micronaut API}"
+
+urls:
+  verify-email: "${URL_VERIFY_EMAIL}"
